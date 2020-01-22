@@ -9,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.Consts;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -21,9 +23,13 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.registration.constants.RegistrationConstants;
+import io.mosip.registration.context.ApplicationContext;
+import io.mosip.registration.dto.json.metadata.DigitalId;
 import io.mosip.registration.exception.RegBaseCheckedException;
 import io.mosip.registration.mdm.constants.MosipBioDeviceConstants;
 import io.mosip.registration.mdm.integrator.IMosipBioDeviceIntegrator;
@@ -57,33 +63,50 @@ public class BioDevice {
 	private String firmWare;
 	private String deviceExpiry;
 	private String deviceId;
-	private int deviceSubId;
+	private String deviceCode;
+	private String serialNumber;
+	private String deviceSubId;
 	private String deviceProviderName;
 	private String deviceProviderId;
 	private String timestamp;
+	private String purpose;
+	private String[] specVersion;
+	private DigitalId digitalId;
+	private boolean isRegistered;
+	private boolean isSpecVersionValid;
 
-	private Map<String, Integer> deviceSubIdMapper = new HashMap<String, Integer>() {
+	private Map<String, String> deviceSubIdMapper = new HashMap<String, String>() {
 		{
 
-			put("LEFT", 1);
-			put("RIGHT", 2);
-			put("THUMBS", 3);
-			put("FACE", 0);
-			put("DOUBLE", 3);
-			put("SINGLE",0);
+			put("LEFT", "1");
+			put("RIGHT", "2");
+			put("THUMBS", "3");
+			put("FACE", "0");
+			put("DOUBLE", "3");
+			put("SINGLE", "0");
 		}
 	};
 
 	private IMosipBioDeviceIntegrator mosipBioDeviceIntegrator;
+	
+	
+	public void checkForSpec() {
+		if(specVersion[0].equals((String) ApplicationContext.getInstance().map().get("current_mdm_spec")))
+				isSpecVersionValid=true;
+		else
+			isSpecVersionValid=false;
+	}
 
-	public CaptureResponseDto capture(RequestDetail requestDetail) throws RegBaseCheckedException, IOException {
+	public CaptureResponseDto regCapture(RequestDetail requestDetail)
+			throws RegBaseCheckedException, IOException {
 
 		String url = runningUrl + ":" + runningPort + "/" + MosipBioDeviceConstants.CAPTURE_ENDPOINT;
 
 		CaptureResponseDto captureResponse = null;
 
 		/* build the request object for capture */
-		CaptureRequestDto mosipBioCaptureRequestDto = MdmRequestResponseBuilder.buildMosipBioCaptureRequestDto(this,requestDetail);
+		CaptureRequestDto mosipBioCaptureRequestDto = MdmRequestResponseBuilder.buildMosipBioCaptureRequestDto(this,
+				requestDetail);
 		String requestBody = null;
 		ObjectMapper mapper = new ObjectMapper();
 		requestBody = mapper.writeValueAsString(mosipBioCaptureRequestDto);
@@ -93,23 +116,28 @@ public class BioDevice {
 		CloseableHttpResponse response = client.execute(request);
 		captureResponse = mapper.readValue(EntityUtils.toString(response.getEntity()).getBytes(StandardCharsets.UTF_8),
 				CaptureResponseDto.class);
-
 		decode(captureResponse);
+
 		return captureResponse;
 
 	}
 
 	private void decode(CaptureResponseDto mosipBioCaptureResponseDto)
-			throws IOException, JsonParseException, JsonMappingException {
+			throws IOException, JsonParseException, JsonMappingException, RegBaseCheckedException {
 		ObjectMapper mapper = new ObjectMapper();
 		if (null != mosipBioCaptureResponseDto && null != mosipBioCaptureResponseDto.getMosipBioDeviceDataResponses()) {
 			for (CaptureResponseBioDto captureResponseBioDto : mosipBioCaptureResponseDto
 					.getMosipBioDeviceDataResponses()) {
+				//
 				if (null != captureResponseBioDto) {
-					String bioJson = new String(Base64.getDecoder().decode(captureResponseBioDto.getCaptureBioData()));
+					String bioJson = captureResponseBioDto.getCaptureBioData();
 					if (null != bioJson) {
-						CaptureResponsBioDataDto captureResponsBioDataDto = mapper.readValue(bioJson.getBytes(),
-								CaptureResponsBioDataDto.class);
+						CaptureResponsBioDataDto captureResponsBioDataDto = getCaptureResponsBioDataDecoded(bioJson,
+								mapper);
+						captureResponsBioDataDto.setDigitalIdDecoded(mapper.readValue(
+								new String(Base64.getUrlDecoder().decode(captureResponsBioDataDto.getDigitalId()))
+										.getBytes(),
+								DigitalId.class));
 						captureResponseBioDto.setCaptureResponseData(captureResponsBioDataDto);
 					}
 				}
@@ -117,16 +145,41 @@ public class BioDevice {
 		}
 	}
 
-	public InputStream stream(RequestDetail requestDetail) throws IOException {
+	private CaptureResponsBioDataDto getCaptureResponsBioDataDecoded(String capturedData, ObjectMapper mapper) throws RegBaseCheckedException {
 		
+		if (mosipBioDeviceIntegrator.jwsValidation(capturedData)) {
+			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+			Pattern pattern = Pattern.compile(RegistrationConstants.BIOMETRIC_SEPERATOR);
+			Matcher matcher = pattern.matcher(capturedData);
+			String afterMatch = null;
+			if (matcher.find()) {
+				afterMatch = matcher.group(1);
+			}
+
+			String result = new String(Base64.getUrlDecoder().decode(afterMatch));
+			try {
+				return (CaptureResponsBioDataDto) (mapper.readValue(result.getBytes(), CaptureResponsBioDataDto.class));
+			} catch (Exception exception) {
+				throw new RegBaseCheckedException();
+			}
+		} else {
+			throw new RegBaseCheckedException();
+		}
+
+	}
+
+	public InputStream stream() throws IOException {
+
 		String url = runningUrl + ":" + runningPort + "/" + MosipBioDeviceConstants.STREAM_ENDPOINT;
 
 		/* build the request object for capture */
-		CaptureRequestDto mosipBioCaptureRequestDto = MdmRequestResponseBuilder.buildMosipBioCaptureRequestDto(this, requestDetail);
+		StreamingRequestDetail streamRequest = new StreamingRequestDetail();
+		streamRequest.setDeviceId(this.getDeviceId());
+		streamRequest.setDeviceSubId(this.getDeviceSubId());
 
 		HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 		con.setRequestMethod("POST");
-		String request = new ObjectMapper().writeValueAsString(mosipBioCaptureRequestDto);
+		String request = new ObjectMapper().writeValueAsString(streamRequest);
 
 		con.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(con.getOutputStream());

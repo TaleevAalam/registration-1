@@ -9,11 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.cli.MissingArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +20,7 @@ import io.mosip.registration.constants.RegistrationConstants;
 import io.mosip.registration.constants.RegistrationUIConstants;
 import io.mosip.registration.context.SessionContext;
 import io.mosip.registration.exception.RegBaseCheckedException;
-import io.mosip.registration.mdm.dto.RequestDetail;
+import io.mosip.registration.mdm.dto.StreamingRequestDetail;
 import io.mosip.registration.mdm.service.impl.MosipBioDeviceManager;
 import io.mosip.registration.service.bio.impl.BioServiceImpl;
 import javafx.scene.image.Image;
@@ -53,6 +49,8 @@ public class Streamer {
 
 	// Last streaming image
 	private static Image streamImage;
+	
+	private static StreamingRequestDetail streamRequest;
 
 	// Image View, which UI need to be shown
 	private static ImageView imageView;
@@ -89,17 +87,16 @@ public class Streamer {
 	}
 
 	
-	public void startStream(RequestDetail requestDetail, ImageView streamImage, ImageView scanImage) {
-
-		LOGGER.info(STREAMER, APPLICATION_NAME, APPLICATION_ID,
-				"Streamer Thread initiation started for : " + requestDetail.getType());
+	public void startStream(String type, ImageView streamImage, ImageView scanImage) {
+  
+		
+		LOGGER.info(STREAMER, APPLICATION_NAME, APPLICATION_ID, "Streamer Thread initiation started for : " + type);
 
 		streamer_thread = new Thread(new Runnable() {
 
 			public void run() {
 
-				LOGGER.info(STREAMER, APPLICATION_NAME, APPLICATION_ID,
-						"Streamer Thread started for : " + requestDetail.getType());
+				LOGGER.info(STREAMER, APPLICATION_NAME, APPLICATION_ID, "Streamer Thread started for : " + type);
 
 				// Disable Auto-Logout
 				SessionContext.setAutoLogout(false);
@@ -114,11 +111,10 @@ public class Streamer {
 
 					setPopViewControllerMessage(true, RegistrationUIConstants.STREAMING_PREP_MESSAGE, false);
 
-					urlStream = mosipBioDeviceManager.stream(requestDetail);
+					urlStream = mosipBioDeviceManager.stream(type);
 					if (urlStream == null) {
 
-						LOGGER.info(STREAMER, APPLICATION_NAME, APPLICATION_ID,
-								"URL Stream was null for : " + requestDetail.getType());
+						LOGGER.info(STREAMER, APPLICATION_NAME, APPLICATION_ID, "URL Stream was null for : " + type);
 
 						setPopViewControllerMessage(true,
 								RegistrationUIConstants.getMessageLanguageSpecific("202_MESSAGE"), false);
@@ -135,14 +131,14 @@ public class Streamer {
 					try {
 
 						// Refreshing Device info, for checking of new connection
-						mosipBioDeviceManager.refreshBioDeviceByDeviceType(requestDetail.getType());
+						mosipBioDeviceManager.refreshBioDeviceByDeviceType(type);
 
 						// Start stream with new device
-						urlStream = mosipBioDeviceManager.stream(requestDetail);
+						urlStream = mosipBioDeviceManager.stream(type);
 						if (urlStream == null) {
 
 							LOGGER.info(STREAMER, APPLICATION_NAME, APPLICATION_ID,
-									"URL Stream was null for : " + requestDetail.getType());
+									"URL Stream was null for : " + type);
 
 							setPopViewControllerMessage(true,
 									RegistrationUIConstants.getMessageLanguageSpecific("202_MESSAGE"), false);
@@ -205,8 +201,7 @@ public class Streamer {
 
 		streamer_thread.start();
 
-		LOGGER.info(STREAMER, APPLICATION_NAME, APPLICATION_ID,
-				"Streamer Thread initiated completed for : " + requestDetail.getType());
+		LOGGER.info(STREAMER, APPLICATION_NAME, APPLICATION_ID, "Streamer Thread initiated completed for : " + type);
 
 	}
 

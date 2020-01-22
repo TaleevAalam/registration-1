@@ -19,9 +19,11 @@ import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.registration.config.AppConfig;
 import io.mosip.registration.constants.RegistrationConstants;
+import io.mosip.registration.constants.RegistrationUIConstants;
 import io.mosip.registration.controller.BaseController;
 import io.mosip.registration.device.webcam.IMosipWebcamService;
 import io.mosip.registration.device.webcam.PhotoCaptureFacade;
+import io.mosip.registration.exception.RegBaseCheckedException;
 import io.mosip.registration.mdm.dto.CaptureResponseDto;
 import io.mosip.registration.mdm.dto.RequestDetail;
 import io.mosip.registration.service.bio.BioService;
@@ -59,7 +61,7 @@ public class WebCameraController extends BaseController implements Initializable
 
 	@FXML
 	private Button clear;
-	
+
 	@FXML
 	protected ImageView camImageView;
 
@@ -137,10 +139,17 @@ public class WebCameraController extends BaseController implements Initializable
 		CaptureResponseDto captureResponseDto =null;
 		if (bioService.isMdmEnabled()) {
 
-			captureResponseDto = bioService.captureFace(new RequestDetail(RegistrationConstants.FACE_FULLFACE,
-					getValueFromApplicationContext(RegistrationConstants.CAPTURE_TIME_OUT), 1, 
-					getValueFromApplicationContext(RegistrationConstants.FACE_THRESHOLD), null));
-			if (null != captureResponseDto && null!=captureResponseDto.getMosipBioDeviceDataResponses()) {
+			try {
+				captureResponseDto = bioService
+						.captureFace(new RequestDetail(RegistrationConstants.FACE_FULLFACE,
+								getValueFromApplicationContext(RegistrationConstants.CAPTURE_TIME_OUT), 1,
+								getValueFromApplicationContext(RegistrationConstants.FACE_THRESHOLD), null));
+			} catch (RegBaseCheckedException | IOException exception) {
+				generateAlert(RegistrationConstants.ALERT_INFORMATION, RegistrationUIConstants.getMessageLanguageSpecific(exception.getMessage().substring(0, 3)+RegistrationConstants.UNDER_SCORE+RegistrationConstants.MESSAGE.toUpperCase()));
+				streamer.stop();
+				return;
+			}
+			if (null != captureResponseDto && null != captureResponseDto.getMosipBioDeviceDataResponses()) {
 				try {
 					capturedImage = ImageIO.read(new ByteArrayInputStream(bioService.getSingleBioValue(captureResponseDto)));
 				} catch (IOException exception) {
