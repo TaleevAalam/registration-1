@@ -5,8 +5,10 @@ import static io.mosip.registration.constants.RegistrationConstants.APPLICATION_
 import static io.mosip.registration.constants.RegistrationConstants.APPLICATION_NAME;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.StringWriter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +77,16 @@ public class Streamer {
 
 		image = image == null ? streamImage : image;
 
-		BioServiceImpl.setBioStreamImages(image, bioType, attempt);
+		 ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	     ObjectOutputStream oos;
+		try {
+			oos = new ObjectOutputStream(bos);
+			oos.writeObject(image);
+		    oos.flush();
+		} catch (IOException e) {
+		}
+		
+		BioServiceImpl.setBioStreamImages(bos.toByteArray(), bioType, attempt);
 
 		LOGGER.info(STREAMER, APPLICATION_NAME, APPLICATION_ID,
 				"Completed Set Stream image of : " + bioType + " for attempt : " + attempt);

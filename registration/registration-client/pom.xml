@@ -28,13 +28,6 @@
 			<artifactId>spring-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>javafx</artifactId>
-			<version>${javafx.version}</version>
-			<systemPath>${project.basedir}/src/main/resources/fx_lib/jfxrt.jar</systemPath>
-			<scope>system</scope>
-		</dependency>
-		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-idgenerator-rid</artifactId>
 		</dependency>
@@ -42,6 +35,31 @@
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-idvalidator-rid</artifactId>
 		</dependency>
+				<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>11</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.openjfx</groupId>
+    		<artifactId>javafx-fxml</artifactId>
+    		<version>11</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-swing -->
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-swing</artifactId>
+	    <version>11</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-web -->
+<dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-web</artifactId>
+    <version>11</version>
+</dependency>
+	
+			
+		
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-pdfgenerator-itext</artifactId>

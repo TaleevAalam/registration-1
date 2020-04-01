@@ -43,7 +43,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.PolygonBuilder;
 
 public class VirtualKeyboard {
 
@@ -182,12 +181,12 @@ public class VirtualKeyboard {
 		final Button enter = createNonshiftableButton("Enter", KeyCode.ENTER, modifiers, target);
 		final Button tab = createNonshiftableButton("Tab", KeyCode.TAB, modifiers, target);
 
-		final Button cursorLeft = createCursorKey(KeyCode.LEFT, modifiers, target, 15.0, 5.0, 15.0, 15.0, 5.0, 10.0);
-		final Button cursorRight = createCursorKey(KeyCode.RIGHT, modifiers, target, 5.0, 5.0, 5.0, 15.0, 15.0, 10.0);
-		final Button cursorUp = createCursorKey(KeyCode.UP, modifiers, target, 10.0, 0.0, 15.0, 10.0, 5.0, 10.0);
-		final Button cursorDown = createCursorKey(KeyCode.DOWN, modifiers, target, 10.0, 10.0, 15.0, 0.0, 5.0, 0.0);
+//		final Button cursorLeft = createCursorKey(KeyCode.LEFT, modifiers, target, 15.0, 5.0, 15.0, 15.0, 5.0, 10.0);
+//		final Button cursorRight = createCursorKey(KeyCode.RIGHT, modifiers, target, 5.0, 5.0, 5.0, 15.0, 15.0, 10.0);
+//		final Button cursorUp = createCursorKey(KeyCode.UP, modifiers, target, 10.0, 0.0, 15.0, 10.0, 5.0, 10.0);
+//		final Button cursorDown = createCursorKey(KeyCode.DOWN, modifiers, target, 10.0, 10.0, 15.0, 0.0, 5.0, 0.0);
 		final VBox cursorUpDown = new VBox(2);
-		cursorUpDown.getChildren().addAll(cursorUp, cursorDown);
+		//cursorUpDown.getChildren().addAll(cursorUp, cursorDown);
 
 		final Node[][] extraLeftButtons = new Node[][] { { escape }, { tab }, { modifiers.capsLockKey() },
 				{ modifiers.shiftKey() } };
@@ -219,8 +218,7 @@ public class VirtualKeyboard {
 
 		final HBox bottomRow = new HBox(5);
 		bottomRow.setAlignment(Pos.CENTER);
-		bottomRow.getChildren().addAll(modifiers.ctrlKey(), modifiers.altKey(), modifiers.metaKey(), spaceBar,
-				cursorLeft, cursorUpDown, cursorRight);
+		bottomRow.getChildren().addAll(modifiers.ctrlKey(), modifiers.altKey(), modifiers.metaKey(), spaceBar);
 		root.getChildren().add(bottomRow);
 	}
 
@@ -310,15 +308,15 @@ public class VirtualKeyboard {
 				modifiers.ctrlDown().get(), modifiers.altDown().get(), modifiers.metaDown().get());
 	}
 
-	private Button createCursorKey(KeyCode code, Modifiers modifiers, ReadOnlyObjectProperty<Node> target,
-			Double... points) {
-		Button button = createNonshiftableButton("", code, modifiers, target);
-		final Node graphic = PolygonBuilder.create().points(points).build();
-		graphic.setStyle("-fx-fill: -fx-mark-color;");
-		button.setGraphic(graphic);
-		button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-		return button;
-	}
+//	private Button createCursorKey(KeyCode code, Modifiers modifiers, ReadOnlyObjectProperty<Node> target,
+//			Double... points) {
+//		Button button = createNonshiftableButton("", code, modifiers, target);
+//		final Node graphic = PolygonBuilder.create().points(points).build();
+//		graphic.setStyle("-fx-fill: -fx-mark-color;");
+//		button.setGraphic(graphic);
+//		button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+//		return button;
+//	}
 
 	private static class Modifiers {
 		private final ToggleButton shift;

@@ -96,7 +96,7 @@ public class PolicySyncServiceImpl extends BaseService implements PolicySyncServ
 							getPublicKey(responseDTO, centerMachineId, LocalDateTime.from(validDate.toInstant().atZone(ZoneId.of("UTC"))).plusDays(1).toString()+"Z");
 						} else if (validDate.compareTo(
 								new Date(Timestamp.valueOf(DateUtils.getUTCCurrentDateTime()).getTime())) <= 0) {
-							getPublicKey(responseDTO, centerMachineId, DateUtils.getUTCCurrentDateTimeString());
+							getPublicKey(responseDTO, centerMachineId, DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
 						}
 
 					}
@@ -105,7 +105,7 @@ public class PolicySyncServiceImpl extends BaseService implements PolicySyncServ
 							null);
 				} else {
 
-					getPublicKey(responseDTO, centerMachineId, DateUtils.getUTCCurrentDateTimeString());
+					getPublicKey(responseDTO, centerMachineId, DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
 
 				}
 			}

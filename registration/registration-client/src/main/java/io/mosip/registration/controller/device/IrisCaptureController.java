@@ -336,7 +336,7 @@ public class IrisCaptureController extends BaseController {
 	private Image findImage(IrisDetailsDTO capturedIris) {
 		if (bioservice.isMdmEnabled()) {
 			if (bioservice.getBioStreamImage(capturedIris.getIrisType(), capturedIris.getNumOfIrisRetry()) != null)
-				return bioservice.getBioStreamImage(capturedIris.getIrisType(), capturedIris.getNumOfIrisRetry());
+				return convertBytesToImage(bioservice.getBioStreamImage(capturedIris.getIrisType(), capturedIris.getNumOfIrisRetry()));
 			return convertBytesToImage(capturedIris.getIris());
 		}
 		return convertBytesToImage(capturedIris.getIris());
@@ -728,7 +728,7 @@ public class IrisCaptureController extends BaseController {
 						// leftIrisCount++;
 						// iris.setNumOfIrisRetry(leftIrisCount);
 						leftIrisImage.setImage(
-								bioservice.isMdmEnabled() ? bioservice.getBioStreamImage(iris.getIrisType(), attempt)
+								bioservice.isMdmEnabled() ? convertBytesToImage (bioservice.getBioStreamImage(iris.getIrisType(), attempt))
 										: convertBytesToImage(iris.getIris()));
 						leftIrisPane.getStyleClass().add(RegistrationConstants.IRIS_PANES_SELECTED);
 						leftIrisQualityScore.setText(getQualityScore(qualityScore));
@@ -740,7 +740,7 @@ public class IrisCaptureController extends BaseController {
 						// rightIrisCount++;
 						// iris.setNumOfIrisRetry(rightIrisCount);
 						rightIrisImage.setImage(
-								bioservice.isMdmEnabled() ? bioservice.getBioStreamImage(iris.getIrisType(), attempt)
+								bioservice.isMdmEnabled() ? convertBytesToImage (bioservice.getBioStreamImage(iris.getIrisType(), attempt))
 										: convertBytesToImage(iris.getIris()));
 						rightIrisPane.getStyleClass().add(RegistrationConstants.IRIS_PANES_SELECTED);
 						rightIrisQualityScore.setText(getQualityScore(qualityScore));

@@ -829,15 +829,15 @@ public class FaceCaptureController extends BaseController implements Initializab
 				RegistrationConstants.APPLICATION_ID, "Opening Webcam Window to capture Image");
 
 		if (selectedPhoto.getId().equals(RegistrationConstants.APPLICANT_PHOTO_PANE)) {
-			if (webCameraController.webCameraPane == null
-					|| !(webCameraController.webCameraPane.getScene().getWindow().isShowing())) {
+//			if (webCameraController.webCameraPane == null || webCameraController.webCameraPane.getScene()==null
+//					|| !(webCameraController.webCameraPane.getScene().getWindow().isShowing())) {
 				openWebCamWindow(RegistrationConstants.APPLICANT_IMAGE);
-			}
+//			}
 		} else if (selectedPhoto.getId().equals(RegistrationConstants.EXCEPTION_PHOTO_PANE)) {
-			if (webCameraController.webCameraPane == null
-					|| !(webCameraController.webCameraPane.getScene().getWindow().isShowing())) {
+//			if (webCameraController.webCameraPane == null
+//					|| !(webCameraController.webCameraPane.getScene().getWindow().isShowing())) {
 				openWebCamWindow(RegistrationConstants.EXCEPTION_IMAGE);
-			}
+//			}
 		}
 	}
 

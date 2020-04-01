@@ -57,7 +57,6 @@ import io.mosip.registration.mdm.service.impl.MosipBioDeviceManager;
 import io.mosip.registration.service.BaseService;
 import io.mosip.registration.service.bio.BioService;
 import io.mosip.registration.service.security.AuthenticationService;
-import javafx.scene.image.Image;
 
 /**
  * This class {@code BioServiceImpl} handles all the biometric captures and
@@ -93,7 +92,7 @@ public class BioServiceImpl extends BaseService implements BioService {
 
 	private static Map<String, Map<Integer, Double>> BIO_QUALITY_SCORE = new HashMap<String, Map<Integer, Double>>();
 
-	private static Map<String, Map<Integer, Image>> BIO_STREAM_IMAGES = new HashMap<String, Map<Integer, Image>>();
+	private static Map<String, Map<Integer, byte[]>> BIO_STREAM_IMAGES = new HashMap<String, Map<Integer, byte[]>>();
 
 	private static Map<String, List<String>> lowQualityBiometrics = new HashMap<>();
 
@@ -789,7 +788,7 @@ public class BioServiceImpl extends BaseService implements BioService {
 
 				setBioQualityScores(captureResponse.getBioSubType(), attempt,
 						Integer.parseInt(captureResponse.getQualityScore()));
-				setBioStreamImages(convertBytesToImage(Base64.getDecoder().decode(captureResponse.getBioValue())),
+				setBioStreamImages(Base64.getDecoder().decode(captureResponse.getBioValue()),
 						captureResponse.getBioSubType(), attempt);
 
 				// Get Best Capture
@@ -810,21 +809,6 @@ public class BioServiceImpl extends BaseService implements BioService {
 		LOGGER.info(BIO_SERVICE, APPLICATION_NAME, APPLICATION_ID, "Leaving into getIrisImageAsDTOWithMdm method..");
 
 		return detailsDTO;
-	}
-
-	/**
-	 * Convert bytes to image.
-	 *
-	 * @param imageBytes
-	 *            the image bytes
-	 * @return the image
-	 */
-	protected Image convertBytesToImage(byte[] imageBytes) {
-		Image image = null;
-		if (imageBytes != null) {
-			image = new Image(new ByteArrayInputStream(imageBytes));
-		}
-		return image;
 	}
 
 	/**
@@ -1091,19 +1075,19 @@ public class BioServiceImpl extends BaseService implements BioService {
 
 	}
 
-	public static void setBioStreamImages(Image image, String bioType, int attempt) {
+	public static void setBioStreamImages(byte[] image, String bioType, int attempt) {
 
 		LOGGER.info(BIO_SERVICE, APPLICATION_NAME, APPLICATION_ID,
 				"Started Set Stream image of : " + bioType + " for attempt : " + attempt);
 
-		Map<Integer, Image> bioImage = null;
+		Map<Integer, byte[]> bioImage = null;
 
 		if (BIO_STREAM_IMAGES.get(bioType) != null) {
 			bioImage = BIO_STREAM_IMAGES.get(bioType);
 
 		} else {
 
-			bioImage = new HashMap<Integer, Image>();
+			bioImage = new HashMap<Integer, byte[]>();
 
 		}
 
@@ -1131,7 +1115,7 @@ public class BioServiceImpl extends BaseService implements BioService {
 		BIO_STREAM_IMAGES.clear();
 	}
 
-	public Image getBioStreamImage(String bioType, int attempt) {
+	public byte[] getBioStreamImage(String bioType, int attempt) {
 
 		LOGGER.info(BIO_SERVICE, APPLICATION_NAME, APPLICATION_ID,
 				"Get Stream  Quality Score of : " + bioType + " for attempt : " + attempt);

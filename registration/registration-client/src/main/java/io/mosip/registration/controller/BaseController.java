@@ -17,12 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Timer;
-import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.sun.javafx.scene.control.skin.TableHeaderRow;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -40,7 +37,6 @@ import io.mosip.registration.controller.device.FingerPrintCaptureController;
 import io.mosip.registration.controller.device.GuardianBiometricsController;
 import io.mosip.registration.controller.device.IrisCaptureController;
 import io.mosip.registration.controller.device.ScanPopUpViewController;
-import io.mosip.registration.controller.device.Streamer;
 import io.mosip.registration.controller.device.WebCameraController;
 import io.mosip.registration.controller.eodapproval.RegistrationApprovalController;
 import io.mosip.registration.controller.reg.AlertController;
@@ -73,7 +69,6 @@ import io.mosip.registration.service.template.TemplateService;
 import io.mosip.registration.util.acktemplate.TemplateGenerator;
 import io.mosip.registration.util.restclient.ServiceDelegateUtil;
 import javafx.animation.PauseTransition;
-import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -1451,9 +1446,9 @@ public class BaseController {
 	protected void disableColumnsReorder(TableView<?> table) {
 		if (table != null) {
 			table.widthProperty().addListener((source, oldWidth, newWidth) -> {
-				TableHeaderRow header = (TableHeaderRow) table.lookup("TableHeaderRow");
-				header.reorderingProperty()
-						.addListener((observable, oldValue, newValue) -> header.setReordering(false));
+			//	TableHeaderRow header = (TableHeaderRow) table.lookup("TableHeaderRow");
+//				header.reorderingProperty()
+//						.addListener((observable, oldValue, newValue) -> header.setReordering(false));
 			});
 		}
 	}
@@ -1509,7 +1504,7 @@ public class BaseController {
 		String qualityScore = getQualityScore(qualityScoreValue);
 
 		if (qualityScore != null) {
-			Image image = bioService.getBioStreamImage(bioType, attempt);
+			Image image = convertBytesToImage(bioService.getBioStreamImage(bioType, attempt));
 			// Set Stream image
 			streamImage.setImage(image);
 

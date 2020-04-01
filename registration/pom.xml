@@ -24,9 +24,9 @@
 		<javafx.version>2.2</javafx.version>
 		<maven.sonar.version>3.2</maven.sonar.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.version>3.7.0</maven.compiler.version>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.version>3.8.0</maven.compiler.version>
 		<maven.javadoc.version>3.0.1</maven.javadoc.version>
 
 		<!-- Test & Logging -->
@@ -36,7 +36,7 @@
 		<mockito.version>1.10.19</mockito.version>
 
 		<!-- Lombok -->
-		<lombok.version>1.16.18</lombok.version>
+		<lombok.version>1.18.12</lombok.version>
 
 		<!-- Orika Mapper -->
 		<orika.version>1.4.6</orika.version>
@@ -373,8 +373,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven.compiler.version}</version>
 				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
+					<release>11</release>
 					<fork>true</fork>
 					<meminitial>1024m</meminitial>
 					<maxmem>2024m</maxmem>

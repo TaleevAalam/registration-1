@@ -254,7 +254,7 @@
 						<RowConstraints minHeight="10.0" percentHeight="80.0" prefHeight="30.0" vgrow="SOMETIMES" />
 					</rowConstraints>
 				</GridPane>
-				<GridPane fx:id="fingerprintBasedLogin" visible="false">
+				<GridPane fx:id="fingerprintBasedLogin" visible="true">
 					<children>
 						<GridPane styleClass="documentScanHeader">
 							<children>
@@ -561,7 +561,7 @@
 					</rowConstraints>
 				</GridPane>
 
-				<GridPane fx:id="faceBasedLogin" visible="true">
+				<GridPane fx:id="faceBasedLogin" visible="false">
 					<children>
 						<GridPane styleClass="documentScanHeader">
 							<children>

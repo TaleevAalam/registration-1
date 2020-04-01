@@ -148,6 +148,7 @@ public class WebCameraController extends BaseController implements Initializable
 		}
 		CaptureResponseDto captureResponseDto = null;
 		Instant start = Instant.now();
+		Instant end = Instant.now();
 		if (bioService.isMdmEnabled()) {
 
 			try {
@@ -191,9 +192,8 @@ public class WebCameraController extends BaseController implements Initializable
 				}
 
 			} catch (RegBaseCheckedException | IOException exception) {
-				generateAlert(RegistrationConstants.ALERT_INFORMATION,
-						RegistrationUIConstants.getMessageLanguageSpecific(exception.getMessage().substring(0, 3)
-								+ RegistrationConstants.UNDER_SCORE + RegistrationConstants.MESSAGE.toUpperCase()));
+				end = Instant.now();
+				generateAlert(RegistrationConstants.ALERT_INFORMATION, RegistrationUIConstants.getMessageLanguageSpecific(exception.getMessage().substring(0, 3)+RegistrationConstants.UNDER_SCORE+RegistrationConstants.MESSAGE.toUpperCase()));
 				streamer.stop();
 				webCameraStage.close();
 			}
@@ -202,10 +202,10 @@ public class WebCameraController extends BaseController implements Initializable
 			
 			LOGGER.info("REGISTRATION - UI - WEB_CAMERA_CONTROLLER", APPLICATION_NAME, APPLICATION_ID,
 					"Capturing face as proxy");
-			
+			end = Instant.now();
 			
 			parentController.saveApplicantPhoto(photoProvider.captureImage(), imageType, captureResponseDto,
-					Duration.between(start, Instant.now()).toString().replace("PT", ""), isDuplicateFound);
+					Duration.between(start, end).toString().replace("PT", ""), isDuplicateFound);
 			
 			setScanningMsg(RegistrationUIConstants.FACE_CAPTURE_SUCCESS_MSG);
 

@@ -90,7 +90,7 @@ public class UserOnboardServiceImpl extends BaseService implements UserOnboardSe
 
 			idaRequestMap.put(RegistrationConstants.ID, RegistrationConstants.IDENTITY);
 			idaRequestMap.put(RegistrationConstants.VERSION, RegistrationConstants.PACKET_SYNC_VERSION);
-			idaRequestMap.put(RegistrationConstants.REQUEST_TIME, DateUtils.getUTCCurrentDateTimeString());
+			idaRequestMap.put(RegistrationConstants.REQUEST_TIME, DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
 			idaRequestMap.put(RegistrationConstants.TRANSACTION_ID, RegistrationConstants.TRANSACTION_ID_VALUE);
 			Map<String, Boolean> tempMap = new HashMap<>();
 			tempMap.put(RegistrationConstants.BIO, true);
@@ -108,11 +108,11 @@ public class UserOnboardServiceImpl extends BaseService implements UserOnboardSe
 				String[] previousHashArray = { HMACUtils.digestAsPlainText(HMACUtils.generateHash("".getBytes())) };
 
 				biometricDTO.getOperatorBiometricDTO().getFingerprintDetailsDTO().forEach(bio -> {
-
+					
 					bio.getSegmentedFingerprints().forEach(finger -> {
 						LinkedHashMap<String, Object> dataBlockFinger = new LinkedHashMap<>();
 						Map<String, Object> data = new HashMap<>();
-						data.put(RegistrationConstants.ON_BOARD_TIME_STAMP, DateUtils.getUTCCurrentDateTimeString());
+						data.put(RegistrationConstants.ON_BOARD_TIME_STAMP, DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
 						// data.put(RegistrationConstants.TRANSACTION_ID,
 						// RegistrationConstants.TRANSACTION_ID_VALUE);
 						// data.put(RegistrationConstants.DEVICE_PROVIDER_ID,
@@ -152,7 +152,7 @@ public class UserOnboardServiceImpl extends BaseService implements UserOnboardSe
 
 					LinkedHashMap<String, Object> dataBlockIris = new LinkedHashMap<>();
 					Map<String, Object> data = new HashMap<>();
-					data.put(RegistrationConstants.ON_BOARD_TIME_STAMP, DateUtils.getUTCCurrentDateTimeString());
+					data.put(RegistrationConstants.ON_BOARD_TIME_STAMP, DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
 					// data.put(RegistrationConstants.TRANSACTION_ID,
 					// RegistrationConstants.TRANSACTION_ID_VALUE);
 					// data.put(RegistrationConstants.DEVICE_PROVIDER_ID,
@@ -189,7 +189,7 @@ public class UserOnboardServiceImpl extends BaseService implements UserOnboardSe
 
 				LinkedHashMap<String, Object> faceData = new LinkedHashMap<>();
 				Map<String, Object> data = new HashMap<>();
-				data.put(RegistrationConstants.ON_BOARD_TIME_STAMP, DateUtils.getUTCCurrentDateTimeString());
+				data.put(RegistrationConstants.ON_BOARD_TIME_STAMP, DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
 				// requestDataMap.put(RegistrationConstants.TRANSACTION_ID,
 				// RegistrationConstants.TRANSACTION_ID_VALUE);
 				// requestDataMap.put(RegistrationConstants.DEVICE_PROVIDER_ID,
@@ -222,11 +222,11 @@ public class UserOnboardServiceImpl extends BaseService implements UserOnboardSe
 
 				//requestMap.put(RegistrationConstants.TRANSACTION_ID, RegistrationConstants.TRANSACTION_ID_VALUE);
 				requestMap.put(RegistrationConstants.ON_BOARD_BIOMETRICS, listOfBiometric);
-				requestMap.put(RegistrationConstants.ON_BOARD_TIME_STAMP, DateUtils.getUTCCurrentDateTimeString());
+				requestMap.put(RegistrationConstants.ON_BOARD_TIME_STAMP, DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
 
 				Map<String, String> requestParamMap = new LinkedHashMap<>();
 				requestParamMap.put(RegistrationConstants.REF_ID, RegistrationConstants.IDA_REFERENCE_ID);
-				requestParamMap.put(RegistrationConstants.TIME_STAMP, DateUtils.getUTCCurrentDateTimeString());
+				requestParamMap.put(RegistrationConstants.TIME_STAMP, DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
 
 				responseDTO = isIdaAuthRequired(idaRequestMap, requestMap, biometricDTO, requestParamMap);
 			} else {
@@ -499,9 +499,9 @@ public class UserOnboardServiceImpl extends BaseService implements UserOnboardSe
 		map.put(RegistrationConstants.ON_BOARD_BIO_DATA, CryptoUtil.encodeBase64(data));
 		map.put(RegistrationConstants.REF_ID, RegistrationConstants.IDA_REFERENCE_ID);
 		map.put(RegistrationConstants.SALT, salt);
-		map.put(RegistrationConstants.TIME_STAMP, DateUtils.getUTCCurrentDateTimeString());
+		map.put(RegistrationConstants.TIME_STAMP, DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
 		mapRequest.put(RegistrationConstants.ON_BOARD_REQUEST, map);
-		mapRequest.put(RegistrationConstants.REQ_TIME, DateUtils.getUTCCurrentDateTimeString());
+		mapRequest.put(RegistrationConstants.REQ_TIME, DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
 		try {
 			Map<String, Object> responseResult = (Map<String, Object>) serviceDelegateUtil.post(
 					RegistrationConstants.SESSION_KEY_URL, mapRequest, RegistrationConstants.JOB_TRIGGER_POINT_USER);

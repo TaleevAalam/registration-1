@@ -14,8 +14,8 @@ import lombok.Setter;
  * @since 1.0.0
  */
 
-@Getter
 @Setter
+@Getter
 public class BiometricInfoDTO extends BaseDTO {
 
 	/** The fingerprint details DTO. */

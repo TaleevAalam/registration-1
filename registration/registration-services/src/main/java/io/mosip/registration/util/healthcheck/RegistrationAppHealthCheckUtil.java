@@ -85,7 +85,7 @@ public class RegistrationAppHealthCheckUtil {
 			Properties keys = new Properties();
 			keys.load(keyStream);
 			
-		return checkServiceAvailability(keys.getProperty("mosip.reg.healthcheck.url"));
+		return true;
 		} catch (IOException exception) {
 			LOGGER.error("REGISTRATION - REGISTRATIONAPPHEALTHCHECKUTIL - ISNETWORKAVAILABLE" + false,
 					APPLICATION_NAME, APPLICATION_ID, "No Internet Access." + ExceptionUtils.getStackTrace(exception));

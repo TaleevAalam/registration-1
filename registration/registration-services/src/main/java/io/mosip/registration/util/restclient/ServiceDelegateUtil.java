@@ -398,7 +398,7 @@ public class ServiceDelegateUtil {
 				if (subheader != null) {
 					headerValues = subheader.split(":");
 					if (headerValues[0].equalsIgnoreCase("timestamp")) {
-						headerValues[1] = DateUtils.getUTCCurrentDateTimeString();
+						headerValues[1] = DateUtils.getUTCCurrentDateTimeString("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 					} else if (headerValues[0].equalsIgnoreCase("Center-Machine-RefId")) {
 						headerValues[1] = String
 								.valueOf(ApplicationContext.map().get(RegistrationConstants.USER_CENTER_ID))
