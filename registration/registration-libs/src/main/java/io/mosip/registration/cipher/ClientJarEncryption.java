@@ -141,6 +141,11 @@ public class ClientJarEncryption {
 					// DB file
 					File regFolder = new File(args[5]);
 					readDirectoryToByteArray(MOSIP_DB, regFolder, fileNameByBytes);
+					
+					// JFX file
+					File jfxFolder = new File(args[11]);
+					readDirectoryToByteArray(null, jfxFolder, fileNameByBytes);
+
 
 					String path = new File(args[3]).getPath();
 
